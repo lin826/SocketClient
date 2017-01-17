@@ -1,6 +1,4 @@
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
@@ -8,22 +6,23 @@ import java.awt.event.WindowEvent;
 
 import javax.swing.*;
  
-public class GUI_keyboard implements ActionListener,KeyListener {
+public class GUI_keyboard implements KeyListener {
 	private JFrame frame;
 	private JButton button_up,button_left,button_center,button_right;
 	private SocketCient socket_client;
+	private int Status = 0;
 	
 	public GUI_keyboard(SocketCient c){
 		socket_client = c;
-		button_up = new JButton("Turn on Light"); // Light up
+		button_up = new JButton("Turn on Ligh0.t"); // Light up
 		button_left = new JButton("Turn left");
 		button_center = new JButton("Go straight!"); // Go straight
 		button_right = new JButton("Turn right");
 		
-		setButton(button_center,"3");
-		setButton(button_left,"2");
-		setButton(button_right,"4");
-		setButton(button_up,"1");
+		setButton(button_center);
+		setButton(button_left);
+		setButton(button_right);
+		setButton(button_up);
 		 
 		frame = new JFrame();
 		frame.setSize(400, 100);
@@ -36,19 +35,9 @@ public class GUI_keyboard implements ActionListener,KeyListener {
 		
 		frame.setVisible(true);
 	}
-	public void setButton(JButton b,String s){
-		b.setActionCommand(s);
-		b.addActionListener(this);
+	public void setButton(JButton b){
 		b.addKeyListener(this);
 	}
-	public void actionPerformed(ActionEvent e) {
-        String cmd = e.getActionCommand();
-        System.out.println("cmd: " + cmd);
-        send(cmd);
-        if(cmd=="1"){
-        	switchLightButton();
-        }
-    }
 	private void switchLightButton(){
 		if(button_up.getText().equals("Turn on Light"))
     		button_up.setText("Turn off Light");
@@ -71,27 +60,38 @@ public class GUI_keyboard implements ActionListener,KeyListener {
 		switch (k) {
 			case KeyEvent.VK_UP:
 	            System.out.println("Key UP pressed");
-	            send("3");
+	            Status = 3;
+	            makeChange();
 	            break;
 	         
 	        case KeyEvent.VK_LEFT:
 	            System.out.println("Key LEFT pressed");
-	            send("2");
+	            Status = 2;
+	            makeChange();
 	            break;
 	         
 	        case KeyEvent.VK_RIGHT:
 	            System.out.println("Key RIGHT pressed");
-	            send("4");
+	            Status = 4;
+	            makeChange();
 	            break;
 	            
 	        case KeyEvent.VK_DOWN:
 	            System.out.println("Key DOWN pressed");
 	        	switchLightButton();
-	            send("1");
+	            Status = 1;
+	            makeChange();
 	            break;
 	        default:
                 System.out.println("Unknown pressed key: "+c);
 		}
+	}
+	private void makeChange() {
+		if(Status<0){
+			send(Integer.toString(Status));
+		}
+		send(Integer.toString(Status));
+		Status = 0;
 	}
 	@Override
 	public void keyReleased(KeyEvent e) {
@@ -102,17 +102,20 @@ public class GUI_keyboard implements ActionListener,KeyListener {
 		switch (k) {
 			case KeyEvent.VK_UP:
 	            System.out.println("Key UP released");
-	            send("-3");
+	            Status = -3;
+	            makeChange();
 	            break;
 	         
 	        case KeyEvent.VK_LEFT:
 	            System.out.println("Key LEFT released");
-	            send("-2");
+	            Status = -2;
+	            makeChange();
 	            break;
 	         
 	        case KeyEvent.VK_RIGHT:
 	            System.out.println("Key RIGHT released");
-	            send("-4");
+	            Status = -4;
+	            makeChange();
 	            break;
 	        default:
                 System.out.println("Unknown released key: "+c);

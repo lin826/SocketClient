@@ -11,8 +11,8 @@ import java.net.UnknownHostException;
 
 public class SocketCient implements Runnable{
 		private static final int PORT = 1049;
-//		private static String serverAddress = "csclab.tw";
-		private static String serverAddress = "196.114.79.96";
+//		private static String serverAddress = "127.0.0.1";
+		private static String serverAddress = "140.114.79.96";
 		private BufferedReader in;
 	    public static PrintWriter out;
 	    private GUI_keyboard gui;
@@ -43,7 +43,6 @@ public class SocketCient implements Runnable{
 	    	try {
 				socket.close();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
         	this.isRunning = false;
@@ -104,13 +103,12 @@ public class SocketCient implements Runnable{
 					String line = in.readLine();
 					System.out.println(line);
 					if(line==null) endThisThread();
-					if(line.equals("ERROR")) errorHandler("Server closed");
+					if(line.contains("ERROR")) errorHandler("Server closed");
 				} catch (Exception e) {
 					errorHandler("Exception");
 					e.printStackTrace();
 				}
 	        }
-			
 		}
 	    
 	    public static void main(String[] args) throws Exception {
